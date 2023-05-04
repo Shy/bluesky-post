@@ -6,6 +6,7 @@ import 'dart:async';
 
 import 'package:actions_toolkit_dart/core.dart' as core;
 import 'package:bluesky/bluesky.dart' as bsky;
+import 'package:bluesky/src/entities/embed.dart' as embed
 
 Future<void> post() async {
   final service = _service;
@@ -40,15 +41,20 @@ Future<void> post() async {
     retryConfig: retryConfig,
   );
 
+
+  final embedIMG = await embed.Embed.fromUrl(
+    url: core.getInput(
+      name: 'embed',
+      options: core.InputOptions(required: false),
+    ),
+  );
+
   final createdPost = await bluesky.feeds.createPost(
     text: core.getInput(
       name: 'text',
       options: core.InputOptions(required: true),
     ),
-    embed: core.getInput(
-      name: 'Embed',
-      options: core.InputOptions(required: false),
-    ),
+    embed:embedIMG,
   );
 
   core.info(message: 'Sent a post successfully!');
