@@ -45,6 +45,10 @@ Future<void> post() async {
       name: 'text',
       options: core.InputOptions(required: true),
     ),
+    embed: core.getInput(
+      name: 'Embed',
+      options: core.InputOptions(required: false),
+    ),
   );
 
   core.info(message: 'Sent a post successfully!');
