@@ -6,7 +6,7 @@ import 'dart:async';
 
 import 'package:actions_toolkit_dart/core.dart' as core;
 import 'package:bluesky/bluesky.dart' as bsky;
-import 'package:bluesky/src/entities/embed.dart' as embed
+
 
 Future<void> post() async {
   final service = _service;
@@ -41,8 +41,7 @@ Future<void> post() async {
     retryConfig: retryConfig,
   );
 
-
-  final embedIMG = await embed.Embed.fromUrl(
+  final embedIMG = bsky.EmbedExternal(
     url: core.getInput(
       name: 'embed',
       options: core.InputOptions(required: false),
