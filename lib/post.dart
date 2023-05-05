@@ -41,12 +41,12 @@ Future<void> post() async {
     retryConfig: retryConfig,
   );
 
-  final embedIMG = bsky.EmbedExternal(
-    url: core.getInput(
-      name: 'embed',
+  final imageURL = core.getInput(
+      name: 'imageURL',
       options: core.InputOptions(required: false),
-    ),
-  );
+    )
+  if (imageURL.isEmpty){
+
 
   final createdPost = await bluesky.feeds.createPost(
     text: core.getInput(
@@ -55,7 +55,32 @@ Future<void> post() async {
     ),
     embed:embedIMG,
   );
+  }else{
+    final response = await http.get(Uri.parse(imageURL));
 
+    final file = File('dummy.jpg');
+    file.writeAsBytesSync(response.bodyBytes);
+    final blobData = await _getBlobData(bluesky, file);
+    final header = getHeader(image);
+
+    final createdPost = await bluesky.feeds.createPost(
+      text: header,
+      facets: getFacets(
+        image,
+        header,
+      ),
+      embed: bsky.Embed.images(
+        data: bsky.EmbedImages(
+          images: [
+            bsky.Image(
+              alt: "image.title",
+              image: blobData.blob,
+            )
+          ],
+        ),
+      ),
+    );
+  }
   core.info(message: 'Sent a post successfully!');
   core.info(message: 'cid = [${createdPost.data.cid}]');
   core.info(message: 'uri = [${createdPost.data.uri}]');
